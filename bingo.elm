@@ -4,6 +4,46 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
+
+-- MODEL
+
+
+type alias Model =
+    { name : String
+    , gameNumber : Int
+    , entries : List Entry
+    }
+
+
+type alias Entry =
+    { id : Int
+    , phrase : String
+    , points : Int
+    , marked : Bool
+    }
+
+
+initialModel : Model
+initialModel =
+    { name = "Alice"
+    , gameNumber = 1
+    , entries = initialEntries
+    }
+
+
+initialEntries : List Entry
+initialEntries =
+    [ Entry 1 "Future-Proof" 100 False
+    , Entry 1 "Agile Development" 200 False
+    , Entry 1 "React JS" 400 False
+    , Entry 1 "Blockchain Startup" 200 False
+    ]
+
+
+
+--VIEW
+
+
 playerInfo : String -> Int -> String
 playerInfo name gameNumber =
     name ++ "  - Game #" ++ toString gameNumber
@@ -35,15 +75,34 @@ viewFooter =
         ]
 
 
-view : Html msg
-view =
+viewEntryItem : Entry -> Html msg
+viewEntryItem entry =
+    li []
+        [ span [ class "phrase" ] [ text entry.phrase ]
+        , span [ class "points" ] [ text (toString entry.points) ]
+        ]
+
+
+viewEntryList : List Entry -> Html msg
+viewEntryList entries =
+    let
+        listOfEntries =
+            List.map viewEntryItem entries
+    in
+    ul [] listOfEntries
+
+
+view : Model -> Html msg
+view model =
     div [ class "content" ]
         [ viewHeader "Buzzword Bingo"
-        , viewPlayer "Alice" 4
+        , viewPlayer model.name model.gameNumber
+        , viewEntryList model.entries
+        , div [ class "debug" ] [ text (toString model) ]
         , viewFooter
         ]
 
 
 main : Html msg
 main =
-    view
+    view initialModel
