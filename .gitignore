@@ -1,0 +1,5 @@
+elm-stuff/
+elm.js
+bingo.js
+node_modules/
+*.sw*
