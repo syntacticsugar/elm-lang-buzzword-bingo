@@ -35,9 +35,9 @@ initialModel =
 initialEntries : List Entry
 initialEntries =
     [ Entry 1 "Future-Proof" 100 False
-    , Entry 1 "Agile Development" 200 False
-    , Entry 1 "React JS" 400 False
-    , Entry 1 "Blockchain Startup" 200 False
+    , Entry 1 "Parallel Processing" 200 False
+    , Entry 1 "React Redux JS" 200 False
+    , Entry 1 "Blockchain Startup" 400 False
     ]
 
 
