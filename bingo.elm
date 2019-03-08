@@ -1,4 +1,4 @@
-module Bingo exposing (main, playerInfo, view, viewFooter, viewHeader, viewPlayer)
+module Bingo exposing (Entry, Model, Msg(..), initialEntries, initialModel, main, playerInfo, update, view, viewEntryItem, viewEntryList, viewFooter, viewHeader, viewPlayer)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -113,7 +113,7 @@ viewFooter =
 
 viewEntryItem : Entry -> Html Msg
 viewEntryItem entry =
-    li [ classList [ ( "marked", entry.marked ) ] onClick (Mark entry.id) ]
+    li [ classList [ ( "marked", entry.marked ) ], onClick (Mark entry.id) ]
         [ span [ class "phrase" ] [ text entry.phrase ]
         , span [ class "points" ] [ text (toString entry.points) ]
         ]
