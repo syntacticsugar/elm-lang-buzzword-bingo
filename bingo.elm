@@ -2,6 +2,7 @@ module Bingo exposing (main, playerInfo, view, viewFooter, viewHeader, viewPlaye
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 
 
 
@@ -41,6 +42,26 @@ initialEntries =
 
 
 
+--UPDATE
+-- the following is called a `union type`
+
+
+type Msg
+    = NewGame
+
+
+
+-- update function is stateless.  you return a new model.
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        NewGame ->
+            { model | gameNumber = model.gameNumber + 1 }
+
+
+
 --VIEW
 
 
@@ -49,7 +70,7 @@ playerInfo name gameNumber =
     name ++ "  - Game #" ++ toString gameNumber
 
 
-viewPlayer : String -> Int -> Html msg
+viewPlayer : String -> Int -> Html Msg
 viewPlayer name gameNumber =
     let
         playerInfoText =
@@ -61,13 +82,13 @@ viewPlayer name gameNumber =
         [ playerInfoText ]
 
 
-viewHeader : String -> Html msg
+viewHeader : String -> Html Msg
 viewHeader title =
     header []
         [ h1 [] [ text title ] ]
 
 
-viewFooter : Html msg
+viewFooter : Html Msg
 viewFooter =
     footer []
         [ a [ href "http://elm-lang.org" ]
@@ -75,7 +96,7 @@ viewFooter =
         ]
 
 
-viewEntryItem : Entry -> Html msg
+viewEntryItem : Entry -> Html Msg
 viewEntryItem entry =
     li []
         [ span [ class "phrase" ] [ text entry.phrase ]
@@ -83,24 +104,31 @@ viewEntryItem entry =
         ]
 
 
-viewEntryList : List Entry -> Html msg
+viewEntryList : List Entry -> Html Msg
 viewEntryList entries =
     entries
         |> List.map viewEntryItem
+        --List.map returns a list for us, no need for [] syntax
         |> ul []
 
 
-view : Model -> Html msg
+view : Model -> Html Msg
 view model =
     div [ class "content" ]
         [ viewHeader "Buzzword Bingo"
         , viewPlayer model.name model.gameNumber
         , viewEntryList model.entries
+        , div [ class "button-group" ]
+            [ button [ onClick NewGame ] [ text "Start Anew" ] ]
         , div [ class "debug" ] [ text (toString model) ]
         , viewFooter
         ]
 
 
-main : Html msg
+main : Program Never Model Msg
 main =
-    view initialModel
+    Html.beginnerProgram
+        { model = initialModel
+        , view = view
+        , update = update
+        }
