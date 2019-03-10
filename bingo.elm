@@ -127,12 +127,39 @@ viewEntryList entries =
         |> ul []
 
 
+sumMarkedPoints : List Entry -> Int
+sumMarkedPoints entries =
+    --    let
+    --       markedEntries =
+    --          -- List.filter .marked entries
+    --         List.filter (\e -> e.marked) entries
+    --
+    --       pointValues =
+    --          List.map .point markedEntries
+    -- in
+    --List.sum pointValues
+    entries
+        |> List.filter .marked
+        |> List.map .points
+        |> List.sum
+
+
+viewScore : Int -> Html Msg
+viewScore sum =
+    div
+        [ class "score" ]
+        [ span [ class "label" ] [ text "Score" ]
+        , span [ class "value" ] [ text (toString sum) ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     div [ class "content" ]
         [ viewHeader "Buzzword Bingo"
         , viewPlayer model.name model.gameNumber
         , viewEntryList model.entries
+        , viewScore (sumMarkedPoints model.entries)
         , div [ class "button-group" ]
             [ button [ onClick NewGame ] [ text "Start Anew" ] ]
         , div [ class "debug" ] [ text (toString model) ]
