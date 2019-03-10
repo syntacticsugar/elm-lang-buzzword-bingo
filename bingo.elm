@@ -1,3 +1,6 @@
+-- note, hard reload browser to view changes.  sometimes your code ISN'T wrong, it's the browser
+
+
 module Bingo exposing (Entry, Model, Msg(..), initialEntries, initialModel, main, playerInfo, update, view, viewEntryItem, viewEntryList, viewFooter, viewHeader, viewPlayer)
 
 import Html exposing (..)
