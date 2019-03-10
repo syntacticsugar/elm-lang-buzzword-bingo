@@ -141,6 +141,10 @@ sumMarkedPoints entries =
     --          List.map .point markedEntries
     -- in
     --List.sum pointValues
+    -- alternatively, more flashy syntax :
+    --  entries
+    --|> List.filter .marked
+    --|> List.foldl (\e sum -> sum + e.points) 0
     entries
         |> List.filter .marked
         |> List.map .points
