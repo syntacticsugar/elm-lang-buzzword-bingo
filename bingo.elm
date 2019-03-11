@@ -1,11 +1,9 @@
--- note, hard reload browser to view changes.  sometimes your code ISN'T wrong, it's the browser
-
-
-module Bingo exposing (Entry, Model, Msg(..), initialEntries, initialModel, main, playerInfo, update, view, viewEntryItem, viewEntryList, viewFooter, viewHeader, viewPlayer)
+module Bingo exposing (Entry, Model, Msg(..), generateRandomNumber, initialEntries, initialModel, main, playerInfo, sumMarkedPoints, update, view, viewEntryItem, viewEntryList, viewFooter, viewHeader, viewPlayer, viewScore)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Random
 
 
 
@@ -29,7 +27,7 @@ type alias Entry =
 
 initialModel : Model
 initialModel =
-    { name = "Alice"
+    { name = "Mike"
     , gameNumber = 1
     , entries = initialEntries
     }
@@ -38,34 +36,30 @@ initialModel =
 initialEntries : List Entry
 initialEntries =
     [ Entry 1 "Future-Proof" 100 False
-    , Entry 2 "Parallel Processing" 200 False
-    , Entry 3 "React Redux JS" 200 False
-    , Entry 4 "Blockchain Startup" 400 False
+    , Entry 2 "Doing Agile" 200 False
+    , Entry 3 "In The Cloud" 300 False
+    , Entry 4 "Rock-Star Ninja" 400 False
     ]
 
 
 
---UPDATE
--- the following is called a `union type`
+-- UPDATE
 
 
 type Msg
     = NewGame
     | Mark Int
+    | NewRandom Int
 
 
-
--- update function is stateless.  you return a new model.
-
-
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        NewRandom randomNumber ->
+            ( { model | gameNumber = randomNumber }, Cmd.none )
+
         NewGame ->
-            { model
-                | gameNumber = model.gameNumber + 1
-                , entries = initialEntries
-            }
+            ( { model | entries = initialEntries }, generateRandomNumber )
 
         Mark id ->
             let
@@ -76,16 +70,39 @@ update msg model =
                     else
                         e
             in
-            { model | entries = List.map markEntry model.entries }
+            ( { model | entries = List.map markEntry model.entries }, Cmd.none )
 
 
 
---VIEW
+-- COMMANDS
+
+
+generateRandomNumber : Cmd Msg
+generateRandomNumber =
+    Random.generate NewRandom (Random.int 1 100)
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+    div [ class "content" ]
+        [ viewHeader "BUZZWORD BINGO"
+        , viewPlayer model.name model.gameNumber
+        , viewEntryList model.entries
+        , viewScore (sumMarkedPoints model.entries)
+        , div [ class "button-group" ]
+            [ button [ onClick NewGame ] [ text "New Game" ] ]
+        , div [ class "debug" ] [ text (toString model) ]
+        , viewFooter
+        ]
 
 
 playerInfo : String -> Int -> String
 playerInfo name gameNumber =
-    name ++ "  - Game #" ++ toString gameNumber
+    name ++ " - Game #" ++ toString gameNumber
 
 
 viewPlayer : String -> Int -> Html Msg
@@ -110,7 +127,7 @@ viewFooter : Html Msg
 viewFooter =
     footer []
         [ a [ href "http://elm-lang.org" ]
-            [ text "Fueled by Elm." ]
+            [ text "Powered By Elm" ]
         ]
 
 
@@ -124,27 +141,15 @@ viewEntryItem entry =
 
 viewEntryList : List Entry -> Html Msg
 viewEntryList entries =
-    entries
-        |> List.map viewEntryItem
-        --List.map returns a list for us, no need for [] syntax
-        |> ul []
+    let
+        listOfEntries =
+            List.map viewEntryItem entries
+    in
+    ul [] listOfEntries
 
 
 sumMarkedPoints : List Entry -> Int
 sumMarkedPoints entries =
-    --    let
-    --       markedEntries =
-    --          -- List.filter .marked entries
-    --         List.filter (\e -> e.marked) entries
-    --
-    --       pointValues =
-    --          List.map .point markedEntries
-    -- in
-    --List.sum pointValues
-    -- alternatively, more flashy syntax :
-    --  entries
-    --|> List.filter .marked
-    --|> List.foldl (\e sum -> sum + e.points) 0
     entries
         |> List.filter .marked
         |> List.map .points
@@ -160,24 +165,11 @@ viewScore sum =
         ]
 
 
-view : Model -> Html Msg
-view model =
-    div [ class "content" ]
-        [ viewHeader "Buzzword Bingo"
-        , viewPlayer model.name model.gameNumber
-        , viewEntryList model.entries
-        , viewScore (sumMarkedPoints model.entries)
-        , div [ class "button-group" ]
-            [ button [ onClick NewGame ] [ text "Start Anew" ] ]
-        , div [ class "debug" ] [ text (toString model) ]
-        , viewFooter
-        ]
-
-
 main : Program Never Model Msg
 main =
-    Html.beginnerProgram
-        { model = initialModel
+    Html.program
+        { init = ( initialModel, generateRandomNumber )
         , view = view
         , update = update
+        , subscriptions = \_ -> Sub.none
         }
