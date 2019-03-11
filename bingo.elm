@@ -182,7 +182,7 @@ viewScore sum =
 view : Model -> Html Msg
 view model =
     div [ class "content" ]
-        [ viewHeader "Buzzword Bingo"
+        [ viewHeader "TECH BRO Buzzword Bingo"
         , viewPlayer model.name model.gameNumber
         , viewEntryList model.entries
         , viewScore (sumMarkedPoints model.entries)
