@@ -1,4 +1,7 @@
-module Bingo exposing (Entry, Model, Msg(..), generateRandomNumber, initialEntries, initialModel, main, playerInfo, sumMarkedPoints, update, view, viewEntryItem, viewEntryList, viewFooter, viewHeader, viewPlayer, viewScore)
+-- note, hard reload browser to view changes.  sometimes your code ISN'T wrong, it's the browser
+
+
+module Bingo exposing (Entry, Model, Msg(..), initialEntries, initialModel, main, playerInfo, update, view, viewEntryItem, viewEntryList, viewFooter, viewHeader, viewPlayer)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -27,7 +30,7 @@ type alias Entry =
 
 initialModel : Model
 initialModel =
-    { name = "Mike"
+    { name = "Alice"
     , gameNumber = 1
     , entries = initialEntries
     }
@@ -36,14 +39,15 @@ initialModel =
 initialEntries : List Entry
 initialEntries =
     [ Entry 1 "Future-Proof" 100 False
-    , Entry 2 "Doing Agile" 200 False
-    , Entry 3 "In The Cloud" 300 False
-    , Entry 4 "Rock-Star Ninja" 400 False
+    , Entry 2 "Parallel Processing" 200 False
+    , Entry 3 "React Redux JS" 200 False
+    , Entry 4 "Blockchain Startup" 400 False
     ]
 
 
 
--- UPDATE
+--UPDATE
+-- the following is called a `union type`
 
 
 type Msg
@@ -52,14 +56,22 @@ type Msg
     | NewRandom Int
 
 
+
+-- update function is stateless.  you return a new model.
+-- remember, all these need to return a tuple, last of which is a COMMAND
+-- we don't need a command for NewRandom.  I forgot why tho
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        -- remember, all these need to return a tuple, last of which is a COMMAND
         NewRandom randomNumber ->
+            -- we don't need a command for NewRandom.  I forgot why tho
             ( { model | gameNumber = randomNumber }, Cmd.none )
 
         NewGame ->
-            ( { model | entries = initialEntries }, generateRandomNumber )
+            ( { model | entries = initialEntries }, commandGenerateRandomNo )
 
         Mark id ->
             let
@@ -74,35 +86,25 @@ update msg model =
 
 
 
--- COMMANDS
+--COMMANDS
 
 
-generateRandomNumber : Cmd Msg
-generateRandomNumber =
-    Random.generate NewRandom (Random.int 1 100)
+commandGenerateRandomNo : Cmd Msg
+commandGenerateRandomNo =
+    --every command needs to produce a message for our update function when the command is finished
+    --hence first arg to Random.generate is a function to create the message holding the random
+    Random.generate (\num -> NewRandom num) (Random.int 1 100)
 
 
 
--- VIEW
-
-
-view : Model -> Html Msg
-view model =
-    div [ class "content" ]
-        [ viewHeader "BUZZWORD BINGO"
-        , viewPlayer model.name model.gameNumber
-        , viewEntryList model.entries
-        , viewScore (sumMarkedPoints model.entries)
-        , div [ class "button-group" ]
-            [ button [ onClick NewGame ] [ text "New Game" ] ]
-        , div [ class "debug" ] [ text (toString model) ]
-        , viewFooter
-        ]
+--once NewRandom is added to our custom type, we get a free constructor function = syntactic sugar:
+-- Random.generate NewRandom (Random.int 1 100)
+--VIEW
 
 
 playerInfo : String -> Int -> String
 playerInfo name gameNumber =
-    name ++ " - Game #" ++ toString gameNumber
+    name ++ "  - Game #" ++ toString gameNumber
 
 
 viewPlayer : String -> Int -> Html Msg
@@ -127,7 +129,7 @@ viewFooter : Html Msg
 viewFooter =
     footer []
         [ a [ href "http://elm-lang.org" ]
-            [ text "Powered By Elm" ]
+            [ text "Fueled by Elm." ]
         ]
 
 
@@ -141,15 +143,27 @@ viewEntryItem entry =
 
 viewEntryList : List Entry -> Html Msg
 viewEntryList entries =
-    let
-        listOfEntries =
-            List.map viewEntryItem entries
-    in
-    ul [] listOfEntries
+    entries
+        |> List.map viewEntryItem
+        --List.map returns a list for us, no need for [] syntax
+        |> ul []
 
 
 sumMarkedPoints : List Entry -> Int
 sumMarkedPoints entries =
+    --    let
+    --       markedEntries =
+    --          -- List.filter .marked entries
+    --         List.filter (\e -> e.marked) entries
+    --
+    --       pointValues =
+    --          List.map .point markedEntries
+    -- in
+    --List.sum pointValues
+    -- alternatively, more flashy syntax :
+    --  entries
+    --|> List.filter .marked
+    --|> List.foldl (\e sum -> sum + e.points) 0
     entries
         |> List.filter .marked
         |> List.map .points
@@ -165,11 +179,25 @@ viewScore sum =
         ]
 
 
+view : Model -> Html Msg
+view model =
+    div [ class "content" ]
+        [ viewHeader "Buzzword Bingo"
+        , viewPlayer model.name model.gameNumber
+        , viewEntryList model.entries
+        , viewScore (sumMarkedPoints model.entries)
+        , div [ class "button-group" ]
+            [ button [ onClick NewGame ] [ text "Start Anew" ] ]
+        , div [ class "debug" ] [ text (toString model) ]
+        , viewFooter
+        ]
+
+
 main : Program Never Model Msg
 main =
     Html.program
-        { init = ( initialModel, generateRandomNumber )
+        { init = ( initialModel, commandGenerateRandomNo )
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = \n -> Sub.none
         }
