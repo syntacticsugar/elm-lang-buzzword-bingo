@@ -193,11 +193,21 @@ view model =
         ]
 
 
+init : ( Model, Cmd Msg )
+init =
+    ( initialModel, commandGenerateRandomNo )
+
+
 main : Program Never Model Msg
 main =
     Html.program
-        { init = ( initialModel, commandGenerateRandomNo )
+        { init = init
         , view = view
         , update = update
-        , subscriptions = \n -> Sub.none
+
+        --, subscriptions = \model -> Sub.none
+        -- always : a -> b -> a
+        -- It takes an a value and a b value, but always returns the a value. Thus, it's a constant function. In the subscription example, we're calling always in a curried form by passing just the first argument (the a value):
+        -- The second argument (the b value) is the model argument which we ignored using _ in our anonymous function. So we can achieve the same thing using always because it always completely ignores the second argument!
+        , subscriptions = always Sub.none
         }
