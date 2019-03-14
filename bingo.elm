@@ -6,6 +6,7 @@ module Bingo exposing (Entry, Model, Msg(..), initialEntries, initialModel, main
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Http
 import Random
 
 
@@ -40,7 +41,7 @@ initialEntries : List Entry
 initialEntries =
     [ Entry 1 "Future-Proof" 100 False
     , Entry 2 "Parallel Processing" 200 False
-    , Entry 3 "React Redux JS" 200 False
+    , Entry 3 "Strategic Partner" 200 False
     , Entry 4 "Blockchain Startup" 400 False
     ]
 
@@ -54,6 +55,7 @@ type Msg
     = NewGame
     | Mark Int
     | NewRandom Int
+    | NewEntries (Result Http.Error String)
 
 
 
@@ -71,7 +73,21 @@ update msg model =
             ( { model | gameNumber = randomNumber }, Cmd.none )
 
         NewGame ->
-            ( { model | entries = initialEntries }, commandGenerateRandomNo )
+            ( { model | gameNumber = model.gameNumber + 1 }, commandGetEntries )
+
+        NewEntries (Ok jsonString) ->
+            let
+                _ =
+                    Debug.log "congration, you dun it" jsonString
+            in
+            ( model, Cmd.none )
+
+        NewEntries (Err error) ->
+            let
+                _ =
+                    Debug.log "Oops, you dun goofed." error
+            in
+            ( model, Cmd.none )
 
         Mark id ->
             let
@@ -94,6 +110,19 @@ commandGenerateRandomNo =
     --every command needs to produce a message for our update function when the command is finished
     --hence first arg to Random.generate is a function to create the message holding the random
     Random.generate (\num -> NewRandom num) (Random.int 1 100)
+
+
+entriesUrl : String
+entriesUrl =
+    "http://localhost:3000/random-entries"
+
+
+commandGetEntries : Cmd Msg
+commandGetEntries =
+    -- send : (Result Http.Error String -> Msg) -> Request String -> Cmd Msg
+    entriesUrl
+        |> Http.getString
+        |> Http.send NewEntries
 
 
 
@@ -195,7 +224,7 @@ view model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel, commandGenerateRandomNo )
+    ( initialModel, commandGetEntries )
 
 
 main : Program Never Model Msg
