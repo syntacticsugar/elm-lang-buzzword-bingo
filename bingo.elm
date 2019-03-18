@@ -75,19 +75,21 @@ update msg model =
         NewGame ->
             ( { model | gameNumber = model.gameNumber + 1 }, commandGetEntries )
 
-        NewEntries (Ok jsonString) ->
-            let
-                _ =
-                    Debug.log "congration, you dun it" jsonString
-            in
-            ( model, Cmd.none )
+        NewEntries result ->
+            case result of
+                Ok jsonString ->
+                    let
+                        _ =
+                            Debug.log "congration, you dun it" jsonString
+                    in
+                    ( model, Cmd.none )
 
-        NewEntries (Err error) ->
-            let
-                _ =
-                    Debug.log "Oops, you dun goofed." error
-            in
-            ( model, Cmd.none )
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "Oops, you dun goofed." jsonString
+                    in
+                    ( model, Cmd.none )
 
         Mark id ->
             let
