@@ -7,6 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Http
+import Json.Decode as Decode exposing (Decoder, field, succeed)
 import Random
 
 
@@ -55,7 +56,7 @@ type Msg
     = NewGame
     | Mark Int
     | NewRandom Int
-    | NewEntries (Result Http.Error String)
+    | NewEntries (Result Http.Error (List Entry))
 
 
 
@@ -77,17 +78,13 @@ update msg model =
 
         NewEntries result ->
             case result of
-                Ok jsonString ->
-                    let
-                        _ =
-                            Debug.log "congration, you dun it" jsonString
-                    in
-                    ( model, Cmd.none )
+                Ok randomEntries ->
+                    ( { model | entries = randomEntries }, Cmd.none )
 
                 Err error ->
                     let
                         _ =
-                            Debug.log "Oops, you dun goofed." jsonString
+                            Debug.log "Oops, you dun goofed." error
                     in
                     ( model, Cmd.none )
 
@@ -101,6 +98,20 @@ update msg model =
                         e
             in
             ( { model | entries = List.map markEntry model.entries }, Cmd.none )
+
+
+
+--DECODERS
+-- eugh, this is so fucking hard i Dont understand it.  get HELP fast SAVE OUR SHIP
+
+
+entryDecoder : Decoder Entry
+entryDecoder =
+    Decode.map4 Entry
+        (Decode.field "id" Decode.int)
+        (Decode.field "phrase" Decode.string)
+        (Decode.field "points" Decode.int)
+        (Decode.succeed False)
 
 
 
@@ -122,8 +133,8 @@ entriesUrl =
 commandGetEntries : Cmd Msg
 commandGetEntries =
     -- send : (Result Http.Error String -> Msg) -> Request String -> Cmd Msg
-    entriesUrl
-        |> Http.getString
+    Decode.list entryDecoder
+        |> Http.get entriesUrl
         |> Http.send NewEntries
 
 
