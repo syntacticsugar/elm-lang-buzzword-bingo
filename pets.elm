@@ -5,6 +5,7 @@ import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Maybe
 
 
 
@@ -61,9 +62,19 @@ update msg model =
 
 petListElement : Model -> String -> Html PetAppMsg
 petListElement model petName =
+    let
+        petCountMaybe =
+            Dict.get petName model.petCounts
+    in
+    -- if we got a "Just 10" or "Just 3" from `petCountMaybe`, we need to use the inner value, ex 10, or 3
+    -- but if we got a "Nothing" we need to use the default (`withDefault`) 0
+    let
+        petCount =
+            Maybe.withDefault 0 petCountMaybe
+    in
     li []
         [ button [ onClick Increment ] [ text petName ]
-        , span [] [ text (String.fromInt model.count) ] -- TODO look up details for pet
+        , span [] [ text (String.fromInt petCount) ]
         ]
 
 
