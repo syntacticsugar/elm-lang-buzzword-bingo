@@ -44,13 +44,20 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    ol [ id "pets", class "pink-text" ]
-        [ li [] [ button [ onClick Increment ] [ text "red fox" ] ]
-        , li [] [ button [ onClick Increment ] [ text "golden retriever" ] ]
-        , li [] [ button [ onClick Increment ] [ text "dove" ] ]
-        , li [] [ button [ onClick Increment ] [ text "goldfish" ] ]
-        , li [] [ button [ onClick Increment ] [ text "hedgehog" ] ]
-        , li [] [ button [ onClick Increment ] [ text "luis" ] ]
+    div []
+        [ h2 [] [ text "Pet Contest" ]
+        , div [ class "intro" ] [ text "Vote for your favorite pet" ]
+
+        --, div [class "score"] [ text "Score: " ]
+        , div [ class "score" ] [ text "SCORE: ", text (String.fromInt model.count) ]
+        , ol [ id "pets", class "pink-text" ]
+            [ li [] [ button [ onClick Increment ] [ text "red fox" ] ]
+            , li [] [ button [ onClick Increment ] [ text "golden retriever" ] ]
+            , li [] [ button [ onClick Increment ] [ text "dove" ] ]
+            , li [] [ button [ onClick Increment ] [ text "goldfish" ] ]
+            , li [] [ button [ onClick Increment ] [ text "hedgehog" ] ]
+            , li [] [ button [ onClick Increment ] [ text "luis" ] ]
+            ]
         ]
 
 
