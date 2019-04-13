@@ -46,14 +46,33 @@ type PetAppMsg
 -- UPDATE
 
 
+incrementMaybe : Maybe Int -> Maybe Int
+incrementMaybe maybeInt =
+    case maybeInt of
+        Just x ->
+            Just (x + 1)
+
+        Nothing ->
+            Just 1
+
+
 update : PetAppMsg -> Model -> Model
 update msg model =
     case msg of
-        Increment _ ->
-            { model | count = model.count + 1 }
+        Increment petName ->
+            let
+                newPetCounts =
+                    Dict.update petName incrementMaybe model.petCounts
+            in
+            { model
+                | count = model.count + 1
+                , petCounts = newPetCounts
+            }
 
         Decrement _ ->
-            { model | count = model.count - 1 }
+            { model
+                | count = model.count - 1
+            }
 
 
 
