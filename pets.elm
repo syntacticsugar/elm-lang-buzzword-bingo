@@ -38,8 +38,8 @@ initialModel =
 
 
 type PetAppMsg
-    = Increment
-    | Decrement
+    = Increment String
+    | Decrement String
 
 
 
@@ -49,10 +49,10 @@ type PetAppMsg
 update : PetAppMsg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
+        Increment _ ->
             { model | count = model.count + 1 }
 
-        Decrement ->
+        Decrement _ ->
             { model | count = model.count - 1 }
 
 
@@ -73,7 +73,7 @@ petListElement model petName =
             Maybe.withDefault 0 petCountMaybe
     in
     li []
-        [ button [ onClick Increment ] [ text petName ]
+        [ button [ onClick (Increment petName) ] [ text petName ]
         , span [] [ text (String.fromInt petCount) ]
         ]
 
