@@ -59,26 +59,38 @@ update msg model =
 -- UPDATE
 
 
+petListElement : Model -> String -> Html PetAppMsg
+petListElement model petName =
+    li []
+        [ button [ onClick Increment ] [ text petName ]
+        , span [] [ text (String.fromInt model.count) ] -- TODO look up details for pet
+        ]
+
+
 view : Model -> Html PetAppMsg
 view model =
     div []
         [ h2 [] [ text "Pet Contest" ]
         , div [ class "intro" ] [ text "Vote for your favorite pet" ]
-
-        --, div [class "score"] [ text "Score: " ]
-        --, span [ class "score" ] [ text "SCORE: " ]
         , span [ class "score-integer" ] [ text (String.fromInt model.count) ]
         , ol [ id "pets", class "pink-text" ]
-            [ li []
-                [ button [ onClick Increment ] [ text "red fox" ]
-                , span [] [ text (String.fromInt model.redFoxCount) ]
-                ]
-            , li [] [ button [ onClick Increment ] [ text "golden retriever" ] ]
-            , li [] [ button [ onClick Increment ] [ text "dove" ] ]
-            , li [] [ button [ onClick Increment ] [ text "goldfish" ] ]
-            , li [] [ button [ onClick Increment ] [ text "hedgehog" ] ]
-            , li [] [ button [ onClick Increment ] [ text "luis" ] ]
+            [ petListElement model "red fox"
+            , petListElement model "golden retriever"
+            , petListElement model "dove"
+            , petListElement model "hedgehog"
+            , petListElement model "luis"
             ]
+
+        --[ li []
+        --    [ button [ onClick Increment ] [ text "red fox" ]
+        --    , span [] [ text (String.fromInt model.redFoxCount) ]
+        --    ]
+        --, li [] [ button [ onClick Increment ] [ text "golden retriever" ] ]
+        --, li [] [ button [ onClick Increment ] [ text "dove" ] ]
+        --, li [] [ button [ onClick Increment ] [ text "goldfish" ] ]
+        --, li [] [ button [ onClick Increment ] [ text "hedgehog" ] ]
+        --, li [] [ button [ onClick Increment ] [ text "luis" ] ]
+        --]
         ]
 
 
