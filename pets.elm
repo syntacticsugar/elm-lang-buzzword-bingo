@@ -45,9 +45,12 @@ update msg model =
 view : Model -> Html Msg
 view model =
     ol [ id "pets", class "pink-text" ]
-        [ li [] [ text "fox" ]
-        , li [] [ text "bird" ]
-        , li [] [ text "goldfish" ]
+        [ li [] [ button [ onClick Increment ] [ text "red fox" ] ]
+        , li [] [ button [ onClick Increment ] [ text "golden retriever" ] ]
+        , li [] [ button [ onClick Increment ] [ text "dove" ] ]
+        , li [] [ button [ onClick Increment ] [ text "goldfish" ] ]
+        , li [] [ button [ onClick Increment ] [ text "hedgehog" ] ]
+        , li [] [ button [ onClick Increment ] [ text "luis" ] ]
         ]
 
 
