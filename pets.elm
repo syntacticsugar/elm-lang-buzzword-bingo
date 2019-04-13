@@ -33,7 +33,7 @@ initialModel =
     }
 
 
-type Msg
+type PetAppMsg
     = Increment
     | Decrement
 
@@ -42,7 +42,7 @@ type Msg
 -- UPDATE
 
 
-update : Msg -> Model -> Model
+update : PetAppMsg -> Model -> Model
 update msg model =
     case msg of
         Increment ->
@@ -56,7 +56,7 @@ update msg model =
 -- UPDATE
 
 
-view : Model -> Html Msg
+view : Model -> Html PetAppMsg
 view model =
     div []
         [ h2 [] [ text "Pet Contest" ]
@@ -79,7 +79,7 @@ view model =
         ]
 
 
-main : Program () Model Msg
+main : Program () Model PetAppMsg
 main =
     Browser.sandbox
         { init = initialModel
