@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -18,6 +19,7 @@ type alias Model =
     , hedgehogCount : Int
     , luisCount : Int
     , count : Int
+    , petCounts : Dict.Dict String Int
     }
 
 
@@ -30,6 +32,7 @@ initialModel =
     , hedgehogCount = 0
     , luisCount = 0
     , count = 0
+    , petCounts = Dict.empty
     }
 
 
