@@ -56,7 +56,7 @@ update msg model =
 
 
 
--- UPDATE
+-- VIEW
 
 
 petListElement : Model -> String -> Html PetAppMsg
@@ -80,17 +80,6 @@ view model =
             , petListElement model "hedgehog"
             , petListElement model "luis"
             ]
-
-        --[ li []
-        --    [ button [ onClick Increment ] [ text "red fox" ]
-        --    , span [] [ text (String.fromInt model.redFoxCount) ]
-        --    ]
-        --, li [] [ button [ onClick Increment ] [ text "golden retriever" ] ]
-        --, li [] [ button [ onClick Increment ] [ text "dove" ] ]
-        --, li [] [ button [ onClick Increment ] [ text "goldfish" ] ]
-        --, li [] [ button [ onClick Increment ] [ text "hedgehog" ] ]
-        --, li [] [ button [ onClick Increment ] [ text "luis" ] ]
-        --]
         ]
 
 
