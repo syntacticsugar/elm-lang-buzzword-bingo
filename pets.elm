@@ -49,7 +49,8 @@ view model =
         , div [ class "intro" ] [ text "Vote for your favorite pet" ]
 
         --, div [class "score"] [ text "Score: " ]
-        , div [ class "score" ] [ text "SCORE: ", text (String.fromInt model.count) ]
+        , span [ class "score" ] [ text "SCORE: " ]
+        , span [ class "score-integer" ] [ text (String.fromInt model.count) ]
         , ol [ id "pets", class "pink-text" ]
             [ li [] [ button [ onClick Increment ] [ text "red fox" ] ]
             , li [] [ button [ onClick Increment ] [ text "golden retriever" ] ]
